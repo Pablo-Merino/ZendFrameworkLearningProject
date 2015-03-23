@@ -19,7 +19,8 @@ return array(
     'controllers' => array(
         'factories' => array(
           'Blog\Controller\List' => 'Blog\Factory\ListControllerFactory',
-          'Blog\Controller\Write' => 'Blog\Factory\WriteControllerFactory'
+          'Blog\Controller\Write' => 'Blog\Factory\WriteControllerFactory',
+          'Blog\Controller\Delete' => 'Blog\Factory\DeleteControllerFactory'
         )
     ),
     'view_manager' => array(
@@ -55,7 +56,7 @@ return array(
                                 'action' => 'detail'
                             ),
                             'constraints' => array(
-                                'id' => '[1-9]\d*'
+                                'id' => '\d+'
                             )
                         )
                     ),
@@ -64,8 +65,28 @@ return array(
                         'options' => array(
                             'route' => '/add',
                             'defaults' => array(
-                                'controller' => 'Blog\Controller\WriteController',
+                                'controller' => 'Blog\Controller\Write',
                                 'action' => 'add'
+                            )
+                        )
+                    ),
+                    'edit' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route' => '/edit/:id',
+                            'defaults' => array(
+                                'controller' => 'Blog\Controller\Write',
+                                'action' => 'edit'
+                            )
+                        )
+                    ),
+                    'delete' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route' => '/delete/:id',
+                            'defaults' => array(
+                                'controller' => 'Blog\Controller\Delete',
+                                'action' => 'delete'
                             )
                         )
                     )

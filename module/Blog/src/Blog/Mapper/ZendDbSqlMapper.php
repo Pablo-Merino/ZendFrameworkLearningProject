@@ -33,12 +33,14 @@ namespace Blog\Mapper;
 use Blog\Model\PostInterface;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Driver\ResultInterface;
-use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Sql;
+use Zend\Db\Sql\Update;
+use Zend\Db\Sql\Delete;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
-class ZendDbSqlMapper implements PostMapperInterface{
+class ZendDbSqlMapper implements PostMapperInterface {
 
     /**
      * @var \Zend\Db\Adapter\AdapterInterface
@@ -113,5 +115,66 @@ class ZendDbSqlMapper implements PostMapperInterface{
             return $resultSet->initialize($result);
         }
         return array();
+    }
+
+    /**
+     * Saves a post
+     *
+     * @param PostInterface $post
+     *
+     * @access
+     * @return mixed
+     * @throws \Exception
+     */
+    public function save(PostInterface $post)
+    {
+        $postData = $this->hydrator->extract($post);
+        unset($postData['id']);
+
+        if ($post->getId())
+        {
+            $action = new Update('posts');
+            $action->set($postData);
+            $action->where(array('id = ?' => $post->getId()));
+        } else {
+            $action = new Insert('posts');
+            $action->values($postData);
+        }
+
+        $sql = new Sql($this->dbAdapter);
+        $stmt = $sql->prepareStatementForSqlObject($action);
+        $result = $stmt->execute();
+
+        if ($result instanceof ResultInterface)
+        {
+            if ($newId = $result->getGeneratedValue())
+            {
+                $post->setId($newId);
+            }
+
+            return $post;
+        }
+
+        throw new \Exception("Database error");
+    }
+
+    /**
+     * Deletes a post
+     *
+     * @param PostInterface $post
+     *
+     * @access
+     * @return mixed
+     */
+    public function delete(PostInterface $post)
+    {
+        $action = new Delete('posts');
+        $action->where(array('id = ?' => $post->getId()));
+
+        $sql    = new Sql($this->dbAdapter);
+        $stmt   = $sql->prepareStatementForSqlObject($action);
+        $result = $stmt->execute();
+
+        return (bool)$result->getAffectedRows();
     }
 }

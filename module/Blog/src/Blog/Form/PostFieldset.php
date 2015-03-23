@@ -30,10 +30,15 @@ namespace Blog\Form;
  * @since      Class available since Release 0.1.0
  */
 use Zend\Form\Fieldset;
+use Blog\Model\Post;
+use Zend\Stdlib\Hydrator\ClassMethods;
 
 class PostFieldset extends Fieldset {
-    public function __construct()
+    public function __construct($name = null, $options = array())
     {
+        parent::__construct($name, $options);
+        $this->setHydrator(new ClassMethods(false));
+        $this->setObject(new Post());
         $this->add(array(
             'type' => 'hidden',
             'name' => 'id'

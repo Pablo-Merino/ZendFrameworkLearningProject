@@ -50,4 +50,24 @@ interface PostMapperInterface {
      * @return mixed
      */
     public function findAll();
+
+    /**
+     * Saves a post
+     *
+     * @param PostInterface $post
+     *
+     * @access
+     * @return mixed
+     */
+    public function save(PostInterface $post);
+
+    /**
+     * Deletes a post
+     *
+     * @param PostInterface $post
+     *
+     * @access
+     * @return mixed
+     */
+    public function delete(PostInterface $post);
 }
