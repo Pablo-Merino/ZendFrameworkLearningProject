@@ -53,4 +53,5 @@ class WriteControllerFactory implements FactoryInterface {
             $postService,
             $postInsertForm
         );
-    }}
+    }
+}
